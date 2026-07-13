@@ -1,0 +1,136 @@
+/* Barra overlay — paridad con finalistas-v2-barra-overlay.html */
+:root{
+  --claude:#D97757;
+  --mago:#9257E8;
+  --mago-glow:#B98AF0;
+  --warn:#E9B44C;
+  --danger:#F26D6D;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:transparent;overflow:hidden}
+body{user-select:none;cursor:default}
+
+/* ============ BASE COMÚN DE BARRAS ============ */
+.bar{
+  height:100%;width:100%;
+  display:flex;align-items:center;
+  padding:0 14px;gap:20px;
+  font-size:11px;line-height:1;white-space:nowrap;overflow:hidden;
+}
+body.nobg .bar{background:transparent !important;border:none !important;box-shadow:none !important;background-image:none !important}
+
+.bar.stateful{text-transform:uppercase}
+.seg{display:flex;align-items:center;gap:7px}
+.cd{margin-left:auto;opacity:.8}
+
+/* Modo compacto: la barra se encoge a su contenido; el contador de reset
+   queda pegado a Fable, separado con una barra */
+body.compact .bar{width:max-content;max-width:100vw}
+body.compact .cd{margin-left:0}
+body.compact .cd::before{content:"|";opacity:.35;margin-right:7px}
+
+/* Fino: el contenido sigue la posición configurada (izq / medio / der) */
+body.pos-med:not(.compact) .bar{justify-content:center}
+body.pos-der:not(.compact) .bar{justify-content:flex-end}
+body.pos-med:not(.compact) .cd,
+body.pos-der:not(.compact) .cd{margin-left:0}
+body.pos-med:not(.compact) .cd::before,
+body.pos-der:not(.compact) .cd::before{content:"|";opacity:.35;margin-right:7px}
+
+/* Sin fondo: sombra sólida en todos los elementos para legibilidad (SPEC §4) */
+body.nobg .bar{text-shadow:1px 1px 0 rgba(0,0,0,.85)}
+body.nobg .bar .track,
+body.nobg .bar .ticks i{box-shadow:1px 1px 0 rgba(0,0,0,.85)}
+.lbl{letter-spacing:.06em}
+.val{font-weight:700}
+.track{position:relative;height:4px;width:74px;border-radius:99px;overflow:hidden;flex:none}
+.fillb{position:absolute;inset:0 auto 0 0;border-radius:99px}
+
+/* ---- brillo por actividad (la barra siempre es visible al 100 %) ---- */
+.stateful .seg{--g:transparent;transition:filter .5s ease;filter:none}
+body.st-use  .stateful .seg.s,
+body.st-use  .stateful .seg.w,
+body.st-fab  .stateful .seg{filter:drop-shadow(0 0 5px var(--g))}
+.seg.flash{animation:flash 1s ease}
+@keyframes flash{
+  0%{filter:drop-shadow(0 0 12px var(--g)) brightness(1.5)}
+  100%{filter:drop-shadow(0 0 5px var(--g)) brightness(1)}
+}
+@media (prefers-reduced-motion:reduce){
+  .stateful .seg{transition:none}
+  .seg.flash{animation:none}
+}
+
+/* Umbrales ≥80% advertencia · ≥90% alerta (SPEC §4) */
+.seg.warn .val{color:var(--warn) !important}
+.seg.danger .val{color:var(--danger) !important}
+/* estado reconectar: sesión caída (SPEC §3.5) */
+.cd.alert{color:var(--danger) !important;opacity:1}
+.seg.warn .fillb,.seg.danger .fillb{background:currentColor}
+
+/* ============ 01 TERMINAL ============ */
+.d01{background:#0A0E0A;font-family:"JetBrains Mono",monospace;border-top:1px solid #1C2B1C}
+.d01 .seg.s{--g:#9BF0A8;color:#9BF0A8}
+.d01 .seg.w{--g:var(--claude);color:var(--claude)}
+.d01 .seg.f{--g:var(--mago-glow);color:var(--mago)}
+.d01 .blocks{letter-spacing:1px;font-size:10px}
+.d01 .cd{color:#5E7F63}
+
+/* ============ 02 GEIST MINIMAL ============ */
+.d02{background:#0C0C0D;font-family:"Geist Mono",monospace;font-weight:300;border-top:1px solid #1A1A1C}
+.d02 .lbl{font-size:9px;text-transform:uppercase}
+.d02 .val{font-weight:500}
+.d02 .track{background:#222225}
+.d02 .seg.s{--g:#EDEDEF;color:#EDEDEF}
+.d02 .seg.w{--g:var(--claude);color:var(--claude)}
+.d02 .seg.f{--g:var(--mago-glow);color:var(--mago)}
+.d02 .seg.s .fillb{background:#EDEDEF}
+.d02 .seg.w .fillb{background:var(--claude)}
+.d02 .seg.f .fillb{background:var(--mago)}
+.d02 .cd{color:#8A8A90}
+
+/* ============ 06 DATA TICKS ============ */
+.d06{background:#17191C;font-family:"DM Mono",monospace;border-top:1px solid #26292E}
+.d06 .lbl{font-size:9px}
+.d06 .ticks{display:flex;gap:3px;align-items:flex-end;height:10px}
+.d06 .ticks i{width:2px;height:7px;background:#33373E}
+.d06 .ticks i.on{height:10px;background:currentColor}
+.d06 .seg.s{--g:#D7DBE2;color:#D7DBE2}
+.d06 .seg.w{--g:var(--claude);color:var(--claude)}
+.d06 .seg.f{--g:var(--mago-glow);color:var(--mago)}
+.d06 .cd{color:#787F8C}
+
+/* ============ 07 CONDENSADA TRIPLE ============ */
+.d07{background:#121317;font-family:"Barlow Condensed",sans-serif;font-size:13px;border-top:1px solid #222431}
+.d07 .lbl{letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+.d07 .val{font-size:14px}
+.d07 .stack{display:flex;flex-direction:column;gap:2px;width:120px;flex:none}
+.d07 .stack .track{height:3px;width:100%;background:#23252E}
+.d07 .seg.s{--g:#5CC8FF;color:#5CC8FF}
+.d07 .seg.w{--g:var(--claude);color:var(--claude)}
+.d07 .seg.f{--g:var(--mago-glow);color:var(--mago)}
+.d07 .seg.s .fillb{background:#5CC8FF}
+.d07 .seg.w .fillb{background:var(--claude)}
+.d07 .seg.f .fillb{background:var(--mago)}
+.d07 .cd{color:#8A90A0;font-size:12px}
+
+/* ============ 08 HYPERLEGIBLE (siempre con fondo) ============ */
+.d08{background:#000;font-family:"Atkinson Hyperlegible Mono",monospace;font-size:12px;border-top:2px solid #fff}
+.d08 .val{font-size:14px}
+.d08 .lbl{font-size:14px;font-weight:700;letter-spacing:0}
+.d08 .pipe{opacity:.3;color:#fff}
+.d08 .seg.s{--g:#FFFFFF;color:#fff}
+.d08 .seg.w{--g:var(--claude);color:var(--claude)}
+.d08 .seg.f{--g:var(--mago-glow);color:var(--mago)}
+.d08 .cd{color:#9AA0AC}
+body.nobg .bar.d08{background:#000 !important;border-top:2px solid #fff !important}
+
+/* ============ 10 BLUEPRINT (sin máquina de estados, siempre con fondo) ============ */
+.d10{background:#0F2A4A;color:#CFE4FA;font-family:"SUSE Mono",monospace;border-top:1px dashed #3E639B;
+     background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px);
+     background-size:100% 6px}
+.d10 .lbl{color:#7FA3D4;text-transform:uppercase;font-size:9px;letter-spacing:.12em}
+.d10 .track{background:rgba(255,255,255,.14);height:2px}
+.d10 .fillb{background:#CFE4FA}
+body.nobg .bar.d10{background:#0F2A4A !important;border-top:1px dashed #3E639B !important;
+  background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px) !important;background-size:100% 6px !important}

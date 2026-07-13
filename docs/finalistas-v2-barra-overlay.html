@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finalistas v2 · Barra de consumo Claude</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Geist+Mono:wght@300;500;700&family=Space+Grotesk:wght@400;600&family=DM+Mono:wght@300;400;500&family=Barlow+Condensed:wght@400;600;700&family=Atkinson+Hyperlegible+Mono:wght@400;700&family=Inter:wght@400;600&family=SUSE+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --desk:#0B0D12;
+    --muted:#7C87A0;
+    --claude:#D97757;          /* naranja característico de Claude */
+    --mago:#9257E8;            /* morado toga de mago */
+    --mago-glow:#B98AF0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--desk);color:#E8ECF4;font-family:Inter,system-ui,sans-serif;padding:26px 18px 60px}
+  .wrap{max-width:1100px;margin:0 auto}
+  h1{font-size:1.15rem;font-weight:700;margin-bottom:4px}
+  .intro{font-size:.82rem;color:var(--muted);max-width:72ch;line-height:1.55;margin-bottom:16px}
+
+  /* ---- simulador de estados ---- */
+  .sim{
+    position:sticky;top:10px;z-index:50;
+    display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+    background:#141926;border:1px solid #242C40;border-radius:12px;
+    padding:10px 12px;margin-bottom:26px;
+  }
+  .sim .t{font-size:.72rem;color:var(--muted);margin-right:4px;letter-spacing:.06em;text-transform:uppercase}
+  .sim button{
+    font:600 .8rem Inter,sans-serif;color:#C6CEDF;background:#1D2436;
+    border:1px solid #2C3650;border-radius:8px;padding:7px 13px;cursor:pointer;
+  }
+  .sim button:hover{border-color:#46557E}
+  .sim button.on{background:#2A3554;color:#fff;border-color:#5CC8FF}
+  .sim .auto.on{border-color:#4ADE80}
+
+  .design{margin-bottom:34px}
+  .meta{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:7px}
+  .meta .n{font:400 .72rem "JetBrains Mono",monospace;color:var(--muted);border:1px solid #232A3A;border-radius:6px;padding:1px 7px}
+  .meta h2{font-size:.9rem;font-weight:600}
+  .meta .font{font-size:.72rem;color:var(--muted)}
+  /* ============ BASE COMÚN DE BARRAS (24 px reales) ============ */
+  .bar{
+    height:24px;width:100%;
+    display:flex;align-items:center;
+    padding:0 14px;gap:20px;
+    font-size:11px;line-height:1;white-space:nowrap;overflow:hidden;
+    user-select:none;box-shadow:0 -6px 24px rgba(0,0,0,.35);
+  }
+  .bar.nobg{background:transparent !important;border:none !important;box-shadow:none !important;background-image:none !important}
+
+  .bar.stateful{text-transform:uppercase}
+  .seg{display:flex;align-items:center;gap:7px}
+  .cd{margin-left:auto;opacity:.8}
+  .lbl{letter-spacing:.06em}
+  .val{font-weight:700}
+  .track{position:relative;height:4px;width:74px;border-radius:99px;overflow:hidden;flex:none}
+  .fillb{position:absolute;inset:0 auto 0 0;border-radius:99px}
+  .w42{width:42%}.w67{width:67%}.w18{width:18%}
+
+  /* ---- máquina de estados de opacidad/brillo ---- */
+  .stateful .seg{--g:transparent;opacity:.32;transition:opacity .5s ease,filter .5s ease;filter:none}
+  body.st-use  .stateful .seg.s,
+  body.st-use  .stateful .seg.w,
+  body.st-fab  .stateful .seg{opacity:1;filter:drop-shadow(0 0 5px var(--g))}
+  .seg.flash{animation:flash 1s ease}
+  @keyframes flash{
+    0%{filter:drop-shadow(0 0 12px var(--g)) brightness(1.5)}
+    100%{filter:drop-shadow(0 0 5px var(--g)) brightness(1)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .stateful .seg{transition:none}
+    .seg.flash{animation:none}
+  }
+
+  /* ============ 01 TERMINAL ============ */
+  .d01{background:#0A0E0A;font-family:"JetBrains Mono",monospace;border-top:1px solid #1C2B1C}
+  .d01 .seg.s{--g:#9BF0A8;color:#9BF0A8}
+  .d01 .seg.w{--g:var(--claude);color:var(--claude)}
+  .d01 .seg.f{--g:var(--mago-glow);color:var(--mago)}
+  .d01 .blocks{letter-spacing:1px;font-size:10px}
+  .d01 .cd{color:#5E7F63}
+
+  /* ============ 02 GEIST MINIMAL ============ */
+  .d02{background:#0C0C0D;font-family:"Geist Mono",monospace;font-weight:300;border-top:1px solid #1A1A1C}
+  .d02 .lbl{font-size:9px;text-transform:uppercase}
+  .d02 .val{font-weight:500}
+  .d02 .track{background:#222225}
+  .d02 .seg.s{--g:#EDEDEF;color:#EDEDEF}
+  .d02 .seg.w{--g:var(--claude);color:var(--claude)}
+  .d02 .seg.f{--g:var(--mago-glow);color:var(--mago)}
+  .d02 .seg.s .fillb{background:#EDEDEF}
+  .d02 .seg.w .fillb{background:var(--claude)}
+  .d02 .seg.f .fillb{background:var(--mago)}
+  .d02 .cd{color:#8A8A90}
+
+  /* ============ 06 DATA TICKS ============ */
+  .d06{background:#17191C;font-family:"DM Mono",monospace;border-top:1px solid #26292E}
+  .d06 .lbl{font-size:9px}
+  .d06 .ticks{display:flex;gap:3px;align-items:flex-end;height:10px}
+  .d06 .ticks i{width:2px;height:7px;background:#33373E}
+  .d06 .ticks i.on{height:10px;background:currentColor}
+  .d06 .seg.s{--g:#D7DBE2;color:#D7DBE2}
+  .d06 .seg.w{--g:var(--claude);color:var(--claude)}
+  .d06 .seg.f{--g:var(--mago-glow);color:var(--mago)}
+  .d06 .cd{color:#787F8C}
+
+  /* ============ 07 CONDENSADA TRIPLE ============ */
+  .d07{background:#121317;font-family:"Barlow Condensed",sans-serif;font-size:13px;border-top:1px solid #222431}
+  .d07 .lbl{letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+  .d07 .val{font-size:14px}
+  .d07 .stack{display:flex;flex-direction:column;gap:2px;width:120px;flex:none}
+  .d07 .stack .track{height:3px;width:100%;background:#23252E}
+  .d07 .seg.s{--g:#5CC8FF;color:#5CC8FF}
+  .d07 .seg.w{--g:var(--claude);color:var(--claude)}
+  .d07 .seg.f{--g:var(--mago-glow);color:var(--mago)}
+  .d07 .seg.s .fillb{background:#5CC8FF}
+  .d07 .seg.w .fillb{background:var(--claude)}
+  .d07 .seg.f .fillb{background:var(--mago)}
+  .d07 .cd{color:#8A90A0;font-size:12px}
+
+  /* ============ 08 HYPERLEGIBLE ============ */
+  .d08{background:#000;font-family:"Atkinson Hyperlegible Mono",monospace;font-size:12px;border-top:2px solid #fff}
+  .d08 .val{font-size:14px}
+  .d08 .lbl{font-size:14px;font-weight:700;letter-spacing:0}
+  .d08 .pipe{opacity:.3;color:#fff}
+  .d08 .seg.s{--g:#FFFFFF;color:#fff}
+  .d08 .seg.w{--g:var(--claude);color:var(--claude)}
+  .d08 .seg.f{--g:var(--mago-glow);color:var(--mago)}
+  .d08 .cd{color:#9AA0AC}
+
+  /* ============ 10 BLUEPRINT (sin cambios) ============ */
+  .d10{background:#0F2A4A;color:#CFE4FA;font-family:"SUSE Mono",monospace;border-top:1px dashed #3E639B;
+       background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px);
+       background-size:100% 6px}
+  .d10 .lbl{color:#7FA3D4;text-transform:uppercase;font-size:9px;letter-spacing:.12em}
+  .d10 .track{background:rgba(255,255,255,.14);height:2px}
+  .d10 .fillb{background:#CFE4FA}
+
+  footer{margin-top:6px;font-size:.72rem;color:#5A6580;line-height:1.6;max-width:76ch}
+</style>
+</head>
+<body class="st-idle">
+<div class="wrap">
+  <h1>Finalistas v2 · estados de actividad, glow y colores</h1>
+  <p class="intro">
+    Usa el simulador para ver los tres estados. <b>Reposo:</b> etiquetas, porcentajes e indicadores
+    al 32% de opacidad. <b>Actividad:</b> Sesión y Semanal suben a opacidad completa con brillo
+    difuminado y un pulso en cada actualización. <b>Actividad con Fable:</b> los tres prenden.
+    Semanal usa el naranja Claude; Fable, morado de toga de mago. Blueprint se conserva intacto.
+  </p>
+
+  <div class="sim">
+    <span class="t">Simulador</span>
+    <button data-st="st-idle" class="on">Reposo</button>
+    <button data-st="st-use">Usando un modelo</button>
+    <button data-st="st-fab">Usando Fable</button>
+    <button class="auto" id="autoBtn">Auto-demo</button>
+    <span class="t" style="margin-left:12px">Fondo</span>
+    <button id="bgBtn" class="on">Con fondo</button>
+  </div>
+
+  <!-- ================= 01 TERMINAL ================= -->
+  <div class="design">
+    <div class="meta"><span class="n">01</span><h2>Terminal</h2><span class="font">JetBrains Mono</span></div>
+    <div class="bar d01 stateful">
+      <span class="seg s"><span class="lbl">Sesión</span><span class="blocks">▓▓▓▓░░░░░░</span><span class="val">42%</span></span>
+      <span class="seg w"><span class="lbl">Semanal</span><span class="blocks">▓▓▓▓▓▓▓░░░</span><span class="val">67%</span></span>
+      <span class="seg f"><span class="lbl">Fable</span><span class="blocks">▓▓░░░░░░░░</span><span class="val">18%</span></span>
+      <span class="cd">reset 02:14:07</span>
+    </div>
+  </div>
+
+  <!-- ================= 02 GEIST MINIMAL ================= -->
+  <div class="design">
+    <div class="meta"><span class="n">02</span><h2>Geist minimal</h2><span class="font">Geist Mono</span></div>
+    <div class="bar d02 stateful">
+      <span class="seg s"><span class="lbl">Sesión</span><span class="track"><span class="fillb w42"></span></span><span class="val">42</span></span>
+      <span class="seg w"><span class="lbl">Semanal</span><span class="track"><span class="fillb w67"></span></span><span class="val">67</span></span>
+      <span class="seg f"><span class="lbl">Fable</span><span class="track"><span class="fillb w18"></span></span><span class="val">18</span></span>
+      <span class="cd">2h 14m</span>
+    </div>
+  </div>
+
+  <!-- ================= 06 DATA TICKS ================= -->
+  <div class="design">
+    <div class="meta"><span class="n">06</span><h2>Data ticks</h2><span class="font">DM Mono</span></div>
+    <div class="bar d06 stateful">
+      <span class="seg s"><span class="lbl">Sesión</span><span class="ticks"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="val">42%</span></span>
+      <span class="seg w"><span class="lbl">Semanal</span><span class="ticks"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span><span class="val">67%</span></span>
+      <span class="seg f"><span class="lbl">Fable</span><span class="ticks"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="val">18%</span></span>
+      <span class="cd">T−02:14</span>
+    </div>
+  </div>
+
+  <!-- ================= 07 CONDENSADA TRIPLE ================= -->
+  <div class="design">
+    <div class="meta"><span class="n">07</span><h2>Condensada triple</h2><span class="font">Barlow Condensed</span></div>
+    <div class="bar d07 stateful">
+      <span class="stack">
+        <span class="track seg s"><span class="fillb w42"></span></span>
+        <span class="track seg w"><span class="fillb w67"></span></span>
+        <span class="track seg f"><span class="fillb w18"></span></span>
+      </span>
+      <span class="seg s"><span class="lbl">Sesión</span><span class="val">42%</span></span>
+      <span class="seg w"><span class="lbl">Semanal</span><span class="val">67%</span></span>
+      <span class="seg f"><span class="lbl">Fable</span><span class="val">18%</span></span>
+      <span class="cd">reinicio en 2 h 14 m · lun 09:00</span>
+    </div>
+  </div>
+
+  <!-- ================= 08 HYPERLEGIBLE (conserva fondo) ================= -->
+  <div class="design">
+    <div class="meta"><span class="n">08</span><h2>Hyperlegible</h2><span class="font">Atkinson Hyperlegible Mono</span></div>
+    <div class="bar d08 stateful">
+      <span class="seg s"><span class="lbl">SESIÓN</span><span class="val">42%</span></span><span class="pipe">|</span>
+      <span class="seg w"><span class="lbl">SEMANAL</span><span class="val">67%</span></span><span class="pipe">|</span>
+      <span class="seg f"><span class="lbl">FABLE</span><span class="val">18%</span></span>
+      <span class="cd">RESET 02:14</span>
+    </div>
+  </div>
+
+  <!-- ================= 10 BLUEPRINT (intacto) ================= -->
+  <div class="design">
+    <div class="meta"><span class="n">10</span><h2>Blueprint</h2><span class="font">SUSE Mono</span><span class="font">· sin cambios</span></div>
+    <div class="bar d10">
+      <span class="seg"><span class="lbl">Ses</span><span class="track"><span class="fillb w42"></span></span><span class="val">42%</span></span>
+      <span class="seg"><span class="lbl">Sem</span><span class="track"><span class="fillb w67"></span></span><span class="val">67%</span></span>
+      <span class="seg"><span class="lbl">Fab</span><span class="track"><span class="fillb w18"></span></span><span class="val">18%</span></span>
+      <span class="cd">Δt 02:14:07</span>
+    </div>
+  </div>
+
+  <footer>
+    En la app real, "usando un modelo" se detecta comparando porcentajes entre actualizaciones:
+    si Sesión/Semanal subieron desde el último poll hay actividad; Fable solo prende si su propio
+    medidor subió. El pulso de brillo se dispara en cada actualización con actividad.
+  </footer>
+</div>
+
+<script>
+  // Toggle de fondo: agrega/quita .nobg sobre las MISMAS barras (sin duplicar DOM).
+  // Blueprint (d10) y Hyperlegible (d08) se excluyen: conservan su fondo siempre.
+  const bgBtn = document.getElementById("bgBtn");
+  let bgOn = true;
+  bgBtn.addEventListener("click", ()=>{
+    bgOn = !bgOn;
+    document.querySelectorAll(".bar.stateful:not(.d08)").forEach(b=>{
+      b.classList.toggle("nobg", !bgOn);
+    });
+    bgBtn.textContent = bgOn ? "Con fondo" : "Sin fondo";
+    bgBtn.classList.toggle("on", bgOn);
+  });
+
+  // Simulador de estados
+  const states = ["st-idle","st-use","st-fab"];
+  const btns = document.querySelectorAll(".sim [data-st]");
+  function setState(st){
+    document.body.classList.remove(...states);
+    document.body.classList.add(st);
+    btns.forEach(b=>b.classList.toggle("on", b.dataset.st===st));
+    if(st==="st-idle") return;
+    // pulso de actualización en los segmentos activos
+    const sel = st==="st-fab" ? ".stateful .seg" : ".stateful .seg.s, .stateful .seg.w";
+    document.querySelectorAll(sel).forEach(el=>{
+      el.classList.remove("flash");
+      void el.offsetWidth; // reinicia la animación
+      el.classList.add("flash");
+    });
+  }
+  btns.forEach(b=>b.addEventListener("click",()=>setState(b.dataset.st)));
+
+  // Auto-demo: reposo → uso → uso → fable, como polls de 3 s
+  let timer=null, i=0;
+  const seq=["st-idle","st-use","st-use","st-fab"];
+  document.getElementById("autoBtn").addEventListener("click",function(){
+    if(timer){clearInterval(timer);timer=null;this.classList.remove("on");return;}
+    this.classList.add("on");
+    timer=setInterval(()=>{ setState(seq[i%seq.length]); i++; },3000);
+  });
+</script>
+</body>
+</html>

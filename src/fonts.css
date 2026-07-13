@@ -1,0 +1,14 @@
+/* Fuentes empaquetadas localmente — cero CDN en runtime (SPEC §2). */
+@font-face{font-family:"Geist Mono";font-style:normal;font-weight:300;font-display:swap;src:url("fonts/geist-mono-300.woff2") format("woff2")}
+@font-face{font-family:"Geist Mono";font-style:normal;font-weight:500;font-display:swap;src:url("fonts/geist-mono-500.woff2") format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/jetbrains-mono-400.woff2") format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:700;font-display:swap;src:url("fonts/jetbrains-mono-700.woff2") format("woff2")}
+@font-face{font-family:"DM Mono";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/dm-mono-400.woff2") format("woff2")}
+@font-face{font-family:"DM Mono";font-style:normal;font-weight:500;font-display:swap;src:url("fonts/dm-mono-500.woff2") format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/barlow-condensed-400.woff2") format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-style:normal;font-weight:600;font-display:swap;src:url("fonts/barlow-condensed-600.woff2") format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-style:normal;font-weight:700;font-display:swap;src:url("fonts/barlow-condensed-700.woff2") format("woff2")}
+@font-face{font-family:"Atkinson Hyperlegible Mono";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/atkinson-hyperlegible-mono-400.woff2") format("woff2")}
+@font-face{font-family:"Atkinson Hyperlegible Mono";font-style:normal;font-weight:700;font-display:swap;src:url("fonts/atkinson-hyperlegible-mono-700.woff2") format("woff2")}
+@font-face{font-family:"SUSE Mono";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/suse-mono-400.woff2") format("woff2")}
+@font-face{font-family:"SUSE Mono";font-style:normal;font-weight:700;font-display:swap;src:url("fonts/suse-mono-700.woff2") format("woff2")}

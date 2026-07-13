@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="titlebar" data-tauri-drag-region>
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="tt">Configuración</span>
+    <button class="close first min" id="btnMin" title="Minimizar a la bandeja">–</button>
+    <button class="close" id="btnClose" title="Cerrar">✕</button>
+  </div>
+  <div class="content">
+    <div class="cfg-nav">
+      <button class="on" data-pane="clock">ClaudeClock</button>
+      <button data-pane="graph">ClaudeGraph (BETA)</button>
+      <button data-pane="datos">Datos</button>
+      <button data-pane="cuenta">Cuenta</button>
+    </div>
+
+    <!-- CLAUDECLOCK -->
+    <div class="cfg-pane on" data-pane="clock">
+      <div class="field">
+        <div class="fhead">
+          <label>Personalización</label>
+          <div class="seg-ctrl mini" id="fondoCtrl">
+            <button data-f="sin">Sin fondo</button>
+            <button data-f="con">Con fondo</button>
+          </div>
+        </div>
+        <div class="themes">
+          <div class="theme" data-th="geist"><span class="tn">Geist Minimal</span><span class="prev pv-geist">SES <i>42</i> SEM <i>67</i></span></div>
+          <div class="theme" data-th="term"><span class="tn">Terminal</span><span class="prev pv-term">SES ▓▓░ 42%</span></div>
+          <div class="theme" data-th="ticks"><span class="tn">Data ticks</span><span class="prev pv-ticks">SES |||· 42%</span></div>
+          <div class="theme" data-th="cond"><span class="tn">Condensada</span><span class="prev pv-cond">SES 42%</span></div>
+          <div class="theme" data-th="hyper" data-needsbg><span class="tn">Hyperlegible</span><span class="prev pv-hyper">SES 42%</span></div>
+          <div class="theme" data-th="blue" data-needsbg><span class="tn">Blueprint</span><span class="prev pv-blue">Ses 42%</span></div>
+        </div>
+      </div>
+      <div class="row3">
+        <div class="field">
+          <label>Posición de barra</label>
+          <select id="selPos">
+            <option value="izq-sup">Izquierda superior</option>
+            <option value="med-sup">Medio superior</option>
+            <option value="der-sup">Derecha superior</option>
+            <option value="izq-inf">Izquierda inferior</option>
+            <option value="med-inf">Medio inferior</option>
+            <option value="der-inf">Derecha inferior</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tamaño de barra</label>
+          <select id="selAlto">
+            <option value="fino">Fino</option>
+            <option value="compacto">Compacto</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Monitor de Barra</label>
+          <select id="selMon"></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLAUDEGRAPH -->
+    <div class="cfg-pane" data-pane="graph">
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+        <div class="toggle" style="border:none;padding:0">
+          <div><div class="tl">Activar ClaudeGraph</div></div>
+          <div class="sw-btn" id="swGraph"></div>
+        </div>
+        <div class="toggle dim" style="border:none;padding:0" id="tgShowMain">
+          <div><div class="tl">Mostrar ClaudeGraph en la ventana principal</div></div>
+          <div class="sw-btn disabled" id="swShowMain"></div>
+        </div>
+      </div>
+      <div class="block" style="margin-top:4px" id="cfgGraph">
+        <div class="bh">
+          <span class="bt">ClaudeGraph <b>(BETA)</b></span>
+          <span class="gtabs">
+            <button data-t="s" class="on-s">Sesión</button>
+            <button data-t="w">Semanal</button>
+            <button data-t="f">Fable</button>
+          </span>
+        </div>
+        <div class="gwrap">
+          <div class="spark-bars" style="height:180px"></div>
+          <div class="gtip"></div>
+        </div>
+        <div class="proj"></div>
+      </div>
+    </div>
+
+    <!-- DATOS -->
+    <div class="cfg-pane" data-pane="datos">
+      <div>
+        <div class="toggle divide">
+          <div><div class="tl">Guardar historial local</div><div class="td">Recomendado para ClaudeGraph.</div></div>
+          <div class="sw-btn" id="swHist"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Intervalo de actualización</label>
+        <select id="selInt">
+          <option value="30">30 segundos</option>
+          <option value="60">60 segundos (recomendado)</option>
+          <option value="120">2 minutos</option>
+          <option value="300">5 minutos</option>
+        </select>
+        <div class="desc">Cada cuánto consulta tu uso.</div>
+      </div>
+      <button class="btn red" id="btnDel" style="margin-top:10px">Borrar historial guardado</button>
+    </div>
+
+    <!-- CUENTA -->
+    <div class="cfg-pane" data-pane="cuenta">
+      <div class="login-box">
+        <div class="st"><span class="d" id="stDot"></span><span id="stTxt">Sesión de claude.ai activa</span></div>
+        <button class="btn green" id="btnLogin">Volver a iniciar sesión</button>
+      </div>
+      <div class="toggle">
+        <div><div class="tl">Iniciar con Windows</div><div class="td">la barra aparece al encender</div></div>
+        <div class="sw-btn" id="swAuto"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- popups -->
+  <div id="lockTip">Exclusivo Con Fondo</div>
+  <div class="overlay" id="ovGraph">
+    <div class="modal">
+      <div class="mt">ATENCIÓN</div>
+      <div class="mx">Esta función no está finalizada, puede tener una experiencia deficiente o con fallos. ¿Deseas continuar?</div>
+      <label class="chk"><input type="checkbox" id="grNoShow" checked> No volver a mostrar</label>
+      <div class="mbtns"><button class="btn" id="grSi">Sí</button><button class="btn ghostb" id="grNo">No</button></div>
+    </div>
+  </div>
+  <div class="overlay" id="ovDel">
+    <div class="modal">
+      <div class="mt">ATENCIÓN</div>
+      <div class="mx">¿Confirmas el querer eliminar esta información? Realizar esta acción es irreversible.</div>
+      <div class="mbtns"><button class="btn red" id="delSi">Sí</button><button class="btn ghostb" id="delNo">No</button></div>
+    </div>
+  </div>
+
+  <script src="graph.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

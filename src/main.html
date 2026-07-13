@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body class="no-cr">
+  <div class="titlebar" data-tauri-drag-region>
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="tt">ClaudeClock</span>
+    <button class="close first min" id="btnMin" title="Minimizar a la bandeja">–</button>
+    <button class="close" id="btnClose" title="Cerrar">✕</button>
+  </div>
+  <div class="content">
+    <div class="panel-body">
+      <div class="panel-head">
+        <span class="h">
+          <svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1l1.8 6.4 5.7-3-3 5.7L23 12l-6.5 1.9 3 5.7-5.7-3L12 23l-1.8-6.4-5.7 3 3-5.7L1 12l6.5-1.9-3-5.7 5.7 3z"/></svg>
+          ClaudeClock
+        </span>
+        <span class="sync">sinc. <span class="ago num">—</span></span>
+        <span class="crwrap">cr <span class="sw-btn" id="swCr"></span></span>
+        <button class="chip" id="btnCfg">⚙ Configuración</button>
+      </div>
+
+      <div class="meters">
+        <div class="meter m-s" data-m="s">
+          <div class="top"><span class="name"><span class="led"></span>Sesión</span><span class="pct num">—</span></div>
+          <div class="barx"><div class="fill" style="width:0%"></div></div>
+          <div class="foot">
+            <span class="cred num">créditos <b class="used">0</b> / <input type="number" class="tot" value="10000"> · quedan <b class="left">0</b></span>
+            <span class="reset num">—</span>
+          </div>
+        </div>
+        <div class="meter m-w" data-m="w">
+          <div class="top"><span class="name"><span class="led"></span>Semanal</span><span class="pct num">—</span></div>
+          <div class="barx"><div class="fill" style="width:0%"></div></div>
+          <div class="foot">
+            <span class="cred num">créditos <b class="used">0</b> / <input type="number" class="tot" value="20000"> · quedan <b class="left">0</b></span>
+            <span class="reset num">—</span>
+          </div>
+        </div>
+        <div class="meter m-f" data-m="f">
+          <div class="top"><span class="name"><span class="led"></span>Fable</span><span class="pct num">—</span></div>
+          <div class="barx"><div class="fill" style="width:0%"></div></div>
+          <div class="foot">
+            <span class="cred num">créditos <b class="used">0</b> / <input type="number" class="tot" value="5000"> · quedan <b class="left">0</b></span>
+            <span class="reset num">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ClaudeGraph en ventana principal (visible sólo si está activado + mostrar) -->
+      <div class="block" id="mainGraph" style="display:none">
+        <div class="bh">
+          <span class="bt">ClaudeGraph <b>(BETA)</b></span>
+          <span class="gtabs">
+            <button data-t="s" class="on-s">Sesión</button>
+            <button data-t="w">Semanal</button>
+            <button data-t="f">Fable</button>
+          </span>
+        </div>
+        <div class="gwrap">
+          <div class="spark-bars" style="height:67px"></div>
+          <div class="gtip"></div>
+        </div>
+        <div class="proj"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- popup ATENCIÓN créditos relativos -->
+  <div class="overlay" id="ovCr">
+    <div class="modal">
+      <div class="mt">ATENCIÓN</div>
+      <div class="mx">Anthropic no comparte información de créditos totales en sus planes. El valor que ingreses es relativo, solo funciona como una referencia de uso.</div>
+      <label class="chk"><input type="checkbox" id="crNoShow" checked> No volver a mostrar</label>
+      <div class="mbtns"><button class="btn" id="crOk">Entendido</button></div>
+    </div>
+  </div>
+
+  <script src="graph.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

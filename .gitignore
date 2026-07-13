@@ -1,0 +1,11 @@
+node_modules/
+src-tauri/target/
+src-tauri/gen/
+dist/
+
+# nunca subir secretos ni datos de sesión
+.env
+.env.*
+*.credentials.json
+*.jsonl
+config.json
